@@ -36,8 +36,14 @@ public class Cashier{
             System.out.print("Input seed number:");
             seedNo=kb.nextInt();
           
-           
-           genrand(seedNo,maxSer,maxTime); 		
+            Random rnd= new Random();
+            rnd.setSeed(seedNo);
+            int[] randomlist=new int[maxTime];
+            
+            for(int i=0;i<maxTime;i++) {
+            	randomlist[i]=rnd.nextInt(maxSer+1);
+            	}
+ 
            
             System.out.println("---- START SIMULATION -----");
                         
@@ -45,7 +51,14 @@ public class Cashier{
         	   currentTime++;
         	   
       	   // Check whether has customer finished the servicing and exited from the teller. 
-        	   //waiting.dequeue();  
+        	   for(int i=0;i<maxTellers;i++) {
+        		   if(teller[i]==currentTime-1&&!waiting.isEmpty()) {       			  
+        			   teller[i]=(int)waiting.dequeue()+currentTime;
+        			   customersered++;
+        			   break; // maybe??
+        		   }
+        	   }
+        	
         	   
         	// Check whether the customer is arrival. 
         	   if(seedNo==0) {
@@ -57,33 +70,44 @@ public class Cashier{
         		  ranuse++;
         	   }
         	   
-        	 if(serTime!=0) 
-        		 customersered++;
-        	   
         	// If one customer is arrival,  Put in the teller if a teller is available
-        	   // Put in the queue if all the tellers are full    
-   
-
-             
+        	   // Put in the queue if all the tellers are full 
         	   
-        	for(tellercheck=0;tellercheck>maxTellers;tellercheck+=0) {
+        	   
+        	   //something wrong in this
+        	   	if(serTime>0) {
+        	   		for(int i=0;i<maxTellers;i++) 
+        	   		{
+             		   if(teller[i]==currentTime-1) {
+             			   teller[i]=serTime+currentTime;
+             			  customersered++;
+             			  break;		//maybe??
+             		   }
+             		   //else if(i==maxTellers)
+             		  // waiting.enqueue(serTime);
+             		 // break; //maybe
+        	   		}	   	
+        	   	}
+   	   
+        	/**for(tellercheck=0;tellercheck>maxTellers;tellercheck+=0) {
         		if(teller[tellercheck]<currentTime)
-        			teller[tellercheck]+=serTime+currentTime;
+        			teller[tellercheck]=serTime+currentTime;
         		else tellercheck++;
         		if(tellercheck==maxTellers)
         			waiting.enqueue(serTime);	
-        	}
+        	}**/
         	   
+  
         	   System.out.print("R"+currentTime);
         	for(int i=1;i<maxTellers+1;i++){
         	   System.out.print("   Teller_"+i+"["+teller[i-1]+"]");
            }
         	
-        	System.out.println("   Waiting Queue:["+"]");
+        	System.out.println("   Waiting Queue:"+waiting);
 			
         	currentQueue=waiting.count();
         	if(currentQueue>maxQueue)
-        	maxQueue=currentQueue;
+        		maxQueue=currentQueue;
         	totalQueue+=currentQueue;
            }
     
@@ -99,18 +123,11 @@ public class Cashier{
 
 
 
-public static int[] genrand(int seed,int max,int time){
+//public static int[] genrand(int seed,int max,int time){
 	
-	Random rnd= new Random();
-	rnd.setSeed(seed);
 	
-	int[] randomlist=new int[time];
-	for(int i=0;i<time;i++) {
-		randomlist[i]=rnd.nextInt(max+1);	
-		System.out.println(randomlist[i]);
-	}
-	return randomlist;	
-}
+	//return randomlist;	
+//}
 }
 
 
