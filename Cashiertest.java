@@ -13,30 +13,36 @@ public class Cashiertest{
 
     public  static void main (String [] args){
         Scanner kb = new Scanner (System.in);
-        final int maxTime,maxTellers,maxSer,seedNo;
+        final int maxTime,maxTellers,maxSer;
         int tellercheck=0,serTime=0,currentTime=0,customersered=0,
-        		currentQueue=0,maxQueue=0,ranuse=0;
+        		currentQueue=0,maxQueue=0,ranuse=0,seedNo = 0;
        	double totalQueue=0;
         ListQueue waiting=new ListQueue();
         
         
-        //try{
-            System.out.println("------ SETUP SIMULATION ENVIRONMENT--------");
+        try{
+            System.out.println("------------ SETUP SIMULATION ENVIRONMENT--------------");
             System.out.print("Input simulation length(min):");
             maxTime = kb.nextInt();
-            //if(maxTime<=0)
-            	//throw new numberexception();
+            if(maxTime<=0)
+            	throw new numberexceptionI();
            
 	        System.out.print("Input number of tellers:");
     	    maxTellers = kb.nextInt();
+    	    if(maxTellers<=0)
+    	    	throw new numberexceptionI();
     	    int [] teller = new int[maxTellers];
     	    
             System.out.print("Input maximum serving time for a customer:");
             maxSer=kb.nextInt();
+            if(maxSer<=0)
+    	    	throw new numberexceptionI();
             
             System.out.print("Input seed number:");
             seedNo=kb.nextInt();
-          
+            if(seedNo<0)
+    	    	throw new numberexceptionI();
+            
             Random rnd= new Random();
             rnd.setSeed(seedNo);
             int[] randomlist=new int[maxTime];
@@ -46,7 +52,7 @@ public class Cashiertest{
             	}
 
           
-            System.out.println("-------- START SIMULATION ---------");
+            System.out.println("-------------- START SIMULATION ---------------");
                         
            while(currentTime<maxTime){
         	   currentTime++;
@@ -54,15 +60,13 @@ public class Cashiertest{
       	   // Check whether has customer finished the servicing and exited from the teller. 
         	   for(int i=0;i<maxTellers;i++) {
         	   	
-        	   		//
+        	   	
         		   if(teller[i]==currentTime-1){
         		   		teller[i] = currentTime;
         		   }
-        		   //
-        		   if(teller[i]==currentTime&&!waiting.isEmpty()) {       	//currentTimeÀ³¸Ó­ø¬~-1	  
+        		   if(teller[i]==currentTime&&!waiting.isEmpty()) {        
         			   teller[i]=(int)waiting.dequeue()+currentTime;
         			   customersered++;
-        			    // maybe??  ­ø¬~break;
         		   }
         	   }
         	
@@ -71,14 +75,15 @@ public class Cashiertest{
         	   if(seedNo==0) {
         		System.out.print("A customer came with serving time:");
            	    serTime = kb.nextInt();
-           	    //if (serTime>maxSer) throw new   check input sertime is larger than the maxSer
+           	    if (serTime>maxSer||serTime<0) 
+           	    	throw new logicerrorexception();     //check input serTime is larger than the maxSer
         	   }else {
         		  serTime=randomlist[ranuse];
         		  ranuse++;
         	   }
         	   
         	// If one customer is arrival, „Ã Put in the teller if a teller is available
-        	   //„Ã Put in the queue if all the tellers are full 
+        	   //„ÃPut in the queue if all the tellers are full 
         	   
         	   
         	   //something wrong in this
@@ -95,30 +100,17 @@ public class Cashiertest{
              		 	break; //maybe  ­n­ø­n³£¤@¼Ë, ¦]¬°·|run¨Ì¬q?®É­Ô, ³£¤w¸g­nÂ÷¶}loop
         	   			} 	 	
         	   		}
-        	   	}
-        	   	
-   	   
-        	/**for(tellercheck=0;tellercheck>maxTellers;tellercheck+=0) {
-        		if(teller[tellercheck]<currentTime)
-        			teller[tellercheck]=serTime+currentTime;
-        		else tellercheck++;
-        		if(tellercheck==maxTellers)
-        			waiting.enqueue(serTime);	
-        	}**/
-        	   
+        	   	}        	   	       	   
   
         	   System.out.print("R"+currentTime);
-        	for(int i=1;i<maxTellers+1;i++){
-        	   System.out.print("   Teller_"+i+"[");
-        	   
-        	   //
+        	   for(int i=1;i<maxTellers+1;i++){
+        		   System.out.print("   Teller_"+i+"[");
         	   if(teller[i-1]==currentTime){
         	   		System.out.print("0]");
         	   }
         	   else{
         	   		System.out.print(teller[i-1]+"]");
         	   }
-        	   //
         	   
            }
         	
@@ -130,43 +122,46 @@ public class Cashiertest{
         	totalQueue+=currentQueue;
            }
     
-        System.out.println("------- END OF SIMULATION -------");
+        System.out.println("--------------- END OF SIMULATION --------------");
         System.out.println("Total minute simulated: "+maxTime+" minutes");
        	System.out.println("Number of Tellers: "+maxTellers);
-       	System.out.println("Number of customer served:"+customersered+" customers");
-       	System.out.println("Average Waiting Line Length:"+totalQueue/maxTime+" customers");
-       	System.out.println("Maximum Waiting Line Length:"+maxQueue+" customers");
+       	System.out.println("Number of customer served: "+customersered+" customers");
+       	System.out.println("Average Waiting Line Length: "+totalQueue/maxTime+" customers");
+       	System.out.println("Maximum Waiting Line Length: "+maxQueue+" customers");
        	System.out.println("-------------------------------------------------");
-       	}
-	
-
-
-
-
-//public static int[] genrand(int seed,int max,int time){
-	
-	
-	//return randomlist;	
-//}
-}
-
-
-
-   /**     catch(numberexception e) {
-        	System.out.println(e.getMessage());        	
-        	}
     }
-    
-    class numberexception extends Exception{
-    	public numberexception(){
-    		super("Please input a integer");
-    	}
-      }
+        catch(numberexceptionI e) {
+        	if(seedNo<0) {
+        		System.out.println("Please input integer which is equals or lager than zero!");
+        	}
+        	else
+        		System.out.println(e.getMessage());
+        } 
+        catch(InputMismatchException e1) {
+        	System.out.println("Please input a postive integer!");
+        }
+        catch(logicerrorexception e2) {
+        	System.out.println(e2.getMessage());
+        }
+        catch(Exception e3) {
+        	System.out.println("An error occoured");
+        }
+     }
 }
 
 
+class numberexceptionI extends Exception{
+	public numberexceptionI() {
+		super("Please input a postive integer!");
+	}
+}
 
-**/
+class logicerrorexception extends Exception{
+	public logicerrorexception() {
+		super("The serving time must be between 0 and maximum serving time!");
+	}
+}
+
  class ListQueue extends LinkedList {
 
     public ListQueue() {
