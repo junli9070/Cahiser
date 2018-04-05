@@ -35,15 +35,16 @@ public class Cashier{
             
             System.out.print("Input seed number:");
             seedNo=kb.nextInt();
-          
+            
+            
             Random rnd= new Random();
             rnd.setSeed(seedNo);
             int[] randomlist=new int[maxTime];
             
             for(int i=0;i<maxTime;i++) {
-            	randomlist[i]=rnd.nextInt(maxSer+1);
-            	}
- 
+            		randomlist[i]=rnd.nextInt(maxSer+1);
+            		}
+            	
            
             System.out.println("---- START SIMULATION -----");
                         
@@ -52,10 +53,16 @@ public class Cashier{
         	   
       	   // Check whether has customer finished the servicing and exited from the teller. 
         	   for(int i=0;i<maxTellers;i++) {
-        		   if(teller[i]==currentTime-1&&!waiting.isEmpty()) {       			  
+        		   
+        		   //
+        		   if(teller[i]==currentTime-1){
+        		   		teller[i] = currentTime;
+        		   }
+        		   //
+        		   
+        		   if(teller[i]==currentTime&&!waiting.isEmpty()) {      //currentTime應該唔洗- 			  
         			   teller[i]=(int)waiting.dequeue()+currentTime;
-        			   customersered++;
-        			   break; // maybe??
+        			   customersered++;        			  
         		   }
         	   }
         	
@@ -78,14 +85,14 @@ public class Cashier{
         	   	if(serTime>0) {
         	   		for(int i=0;i<maxTellers;i++) 
         	   		{
-             		   if(teller[i]==currentTime-1) {
+             		   if(teller[i]==currentTime) {   //應該唔洗-1
              			   teller[i]=serTime+currentTime;
              			  customersered++;
              			  break;		//maybe??
              		   }
-             		   //else if(i==maxTellers)
-             		  // waiting.enqueue(serTime);
-             		 // break; //maybe
+             		   else if(i==maxTellers-1)
+             		  waiting.enqueue(serTime);
+             		 break; //maybe 要唔要都一樣, 因為會run依段?時候, 都已經要離開loop
         	   		}	   	
         	   	}
    	   
@@ -100,7 +107,11 @@ public class Cashier{
   
         	   System.out.print("R"+currentTime);
         	for(int i=1;i<maxTellers+1;i++){
-        	   System.out.print("   Teller_"+i+"["+teller[i-1]+"]");
+        	   System.out.print("   Teller_"+i+"[");
+        	   if(teller[i-1]==currentTime)
+        		   System.out.print("0]");
+        	   else 
+        		   System.out.print(teller[i-1]+"]");
            }
         	
         	System.out.println("   Waiting Queue:"+waiting);
